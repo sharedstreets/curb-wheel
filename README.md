@@ -34,7 +34,7 @@ The curb wheel provides an efficient and accurate pathway for city governments o
 - Digitizer source code lives [here](https://github.com/sharedstreets/curbwheel-digitizer).
 
 
-## Development
+## Info for software developers
 
 Prebuilt APKs and iOS releases will be distributed via the Google Play Store and Test Flight but if you wish to build the app locally you can follow the guide below.
 
