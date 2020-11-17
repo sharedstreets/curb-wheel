@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="io.sharedstreets.curbwheel" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="io.sharedstreets.curbwheel" version="0.1.0"   android-versionCode="10010" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Curb Wheel</name>
     <description>
-        
+
     </description>
     <author href="https://sharedstreets.io">
         Shared Streets
@@ -18,7 +18,7 @@
     <platform name="android">
         <allow-intent href="market:*" />
         <resource-file src="res/values/colors.xml" target="/app/src/main/res/values/colors.xml" />
-        
+
         <icon background="@color/background" density="ldpi" foreground="res/icon/android/ldpi-foreground.png" />
         <icon background="@color/background" density="mdpi" foreground="res/icon/android/mdpi-foreground.png" />
         <icon background="@color/background" density="hdpi" foreground="res/icon/android/hdpi-foreground.png" />
