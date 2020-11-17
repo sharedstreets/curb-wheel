@@ -568,7 +568,12 @@ var app = {
         const d = new Date();
         const now = d.toISOString();
 
-        const uploadPrefix = now + "/";
+        const uploadKey = uuid4();
+
+        const uploadPrefix = uploadKey + "/";
+
+        var photoCount = 0;
+        var surveyCount = 0;
 
         console.log("Starting upload...")
 
@@ -580,6 +585,7 @@ var app = {
         var pointData = {type:"FeatureCollection", features:[]};
 
         for (var i=0; i<surveyRows.length; i++){
+          surveyCount++;
           var survey = JSON.parse(surveyRows.item(i).data);
           for (let feature of survey.features) {
 
@@ -587,6 +593,7 @@ var app = {
 
               var imageUrls = [];
               for (let image of feature.images) {
+                photoCount++;
 
                 let splitPath = image.url.split("/");
                 let imagePath = "images/" + splitPath[splitPath.length-1];
@@ -694,6 +701,8 @@ var app = {
           }
 
           await app.io.wipeSurveyData();
+
+          await app.io.saveUploadKey(uploadKey, JSON.stringify({timeStamp: now, key: uploadKey, photoCount: photoCount, surveyCount: surveyCount}));
 
           alert("Upload finished.");
 
