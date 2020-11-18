@@ -506,13 +506,25 @@ var app = {
         features: [],
       };
 
+      let scaleFactor = 1.0;
+      let centerOffset = 0;
+
+      if(survey.ref_len < survey.surveyed_distance) {
+        scaleFactor = survey.ref_len / survey.surveyed_distance;
+      }
+
+      if(survey.ref_len > survey.surveyed_distance) {
+        centerOffset = (survey.ref_len - survey.surveyed_distance) / 2;
+      }
+
       for (let ft of app.state.features) {
+
         let feature = {
           feat_id: ft.feat_id,
           label: ft.name,
           geometry: {
             type: ft.type,
-            distances: [ft.start, ft.end],
+            distances: [(ft.start + centerOffset) / scaleFactor, (ft.end + centerOffset) / scaleFactor],
           },
           images: ft.images,
         };
