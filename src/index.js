@@ -337,7 +337,7 @@ function onDeviceReady() {
                 const li = document.createElement('li');
                 li.classList.add("uploaded-item")
                 uploadedList.appendChild(li);
-                li.innerHTML = `<a href="https://curblr.org/digitizer/?survey=https://curblr-data.s3.amazonaws.com/${uploadData.key}/">${uploadData.timeStamp}: ${uploadData.surveyCount} surveys, ${uploadData.photoCount} photos</a>`
+                li.innerHTML = `<a href="https://curblr.org/digitizer/?survey=https://curblr-data.s3.amazonaws.com/${uploadData.key}/">${uploadData.timeStamp}:<br/> ${uploadData.surveyCount} surveys, ${uploadData.photoCount} photos</a>`
               }
             }
             else {
