@@ -530,9 +530,14 @@ var app = {
         };
 
         if (app.state.rollDirection === 'back') {
-          feature.geometry.distances =
-        	feature.geometry.distances.reverse()
-				      .map(meters => app.state.currentRollDistance - meters)
+
+          if(feature.geometry.distances[0])
+            feature.geometry.distances[0] = surveyed_distance - feature.geometry.distances[0]
+
+          if(feature.geometry.distances[1])
+            feature.geometry.distances[1] = surveyed_distance - feature.geometry.distances[1]
+
+          feature.geometry.distances.reverse();
 
         	feature.images = feature.images
         		.map(image => {
@@ -552,6 +557,8 @@ var app = {
           if( feature.geometry.distances[0] + (HYDRANT_BUFFER / 2) < survey.ref_len)
             hydrantEnd = feature.geometry.distances[0] + (HYDRANT_BUFFER / 2);
 
+          feature.geometry.distances[0] = hydrantStart;
+          feature.geometry.distances[1] = hydrantEnd;
           feature.geometry.geom = app.io.getGeom(app.state.street.ref, hydrantStart, hydrantEnd);
 
         }
