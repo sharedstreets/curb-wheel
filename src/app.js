@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import {point, lineString} from '@turf/helpers';
+import constants from './constants';
 
 
 const HYDRANT_BUFFER = 9.2; // hydrant buffer in meters
@@ -374,10 +375,8 @@ var app = {
       var modes = Object.keys(app.constants.modes);
       var modeIndex = modes.indexOf(app.state.mode) - 1;
       var newMode = modes[modeIndex];
-
-      // set mode as one previous in list, unless there's a custom back() function
-      var customFn = app.constants.modes[app.state.mode].back;
-      var executeCustomFn = customFn ? customFn() : app.ui.mode.set(newMode);
+      console.log(newMode)
+      app.ui.mode.set(newMode);
     },
 
     // produces a confirm dialog once for each instance, with callbacks for cancel and ok.
@@ -841,7 +840,7 @@ constants: {
         set: () => {
           //conditional on whether the map has instantiated
           if (app.ui.map) {
-            app.ui.map.getSource("arrows").setData(app.constants.emptyGeojson);
+            app.ui.map.getSource("arrows").setData(constants.emptyGeojson);
           }
         },
       },
