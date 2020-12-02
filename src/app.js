@@ -532,10 +532,10 @@ var app = {
         if (app.state.rollDirection === 'back') {
 
           if(feature.geometry.distances[0])
-            feature.geometry.distances[0] = surveyed_distance - feature.geometry.distances[0]
+            feature.geometry.distances[0] = survey.surveyed_distance - feature.geometry.distances[0]
 
           if(feature.geometry.distances[1])
-            feature.geometry.distances[1] = surveyed_distance - feature.geometry.distances[1]
+            feature.geometry.distances[1] = survey.surveyed_distance - feature.geometry.distances[1]
 
           feature.geometry.distances.reverse();
 
