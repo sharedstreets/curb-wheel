@@ -94,6 +94,29 @@ class Database {
       });
     }
 
+    insertUploads(key, data) {
+        this.db.transaction(function(tx) {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS upload (id INTEGER PRIMARY KEY, key STRING, data STRING)');
+            tx.executeSql('INSERT INTO upload (key, data) VALUES (?1, ?2)', [key, data]);
+        }, function(err) {
+            console.log('Transaction ERROR: ' + err.message);
+        }, function() {
+            console.log('Populated database OK: ' +  key);
+        });
+    }
+
+    getUploads(ref) {
+      return new Promise((resolve, reject) => {
+        this.db.transaction(function(tx) {
+        tx.executeSql('SELECT * FROM upload', function(tx, error) {
+            reject(error);
+          }, function(tx, rs) {
+            resolve(rs.rows);
+          });
+        });
+      });
+    }
+
     insertPhoto(key ,feature_ref, data) {
         this.db.transaction(function(tx) {
             tx.executeSql('CREATE TABLE IF NOT EXISTS photo (id INTEGER PRIMARY KEY, key STRING, feature_ref STRING, data STRING)');
@@ -108,6 +131,7 @@ class Database {
     deletePhotos() {
       return new Promise((resolve, reject) => {
         this.db.transaction(function(tx) {
+        tx.executeSql('CREATE TABLE IF NOT EXISTS photo (id INTEGER PRIMARY KEY, key STRING, feature_ref STRING, data STRING)');
         tx.executeSql('DELETE FROM photo', function(tx, error) {
             reject(error);
           }, function(tx, rs) {

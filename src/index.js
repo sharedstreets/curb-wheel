@@ -12,6 +12,8 @@ document.addEventListener('deviceready', onDeviceReady, false);
 
 let modalActive = false;
 let uploadModalActive = false;
+let uploadedListModalActive = false;
+
 let deviceId;
 const modal = document.querySelector('.modal');
 const modalBody = document.querySelector('.modal__body');
@@ -22,6 +24,13 @@ const uploadModal = document.querySelector('.upload_modal');
 const uploadModalBody = document.querySelector('.upload_modal__body');
 const uploadModalBackground = document.querySelector('.upload_modal__background');
 const uploadModalCloseBtn = document.querySelector('.upload_modal-close');
+
+const uploadedListModal = document.querySelector('.uploaded_list_modal');
+const uploadedListModalBody = document.querySelector('.uploaded_list_modal__body');
+const uploadedListModalBackground = document.querySelector('.uploaded_list_modal__background');
+const uploadedListModalCloseBtn = document.querySelector('.uploaded_list_modal-close');
+
+const uploadedList = document.querySelector('.uploaded-list');
 
 const connectionsList = document.querySelector('.bluetooth-connections');
 const bleStatus = document.getElementById('ble-status');
@@ -51,6 +60,13 @@ bindClick("modal-close", ()=> {
   modalBackground.classList.remove('modal__background--visible');
   modalBody.classList.remove('modal__body--visible');
   modalActive = false;
+});
+
+bindClick("uploaded_list_modal-close", ()=> {
+  uploadedListModal.classList.remove('uploaded_list_modal--visible');
+  uploadedListModalBackground.classList.remove('uploaded_list_modal__background--visible');
+  uploadedListModalBody.classList.remove('uploaded_list_modal__body--visible');
+  uploadedListModalActive = false;
 });
 
 async function getSignedUrl(uploadPath) {
@@ -135,6 +151,13 @@ function onDeviceReady() {
       await db.deletePhotos();
     }
 
+    app.io.saveUploadKey = async(key, data) => {
+      await db.insertUploads(key, data);
+    }
+
+    app.io.getUploadKeys = async(key, timeStamp) => {
+      return await db.getUploads();
+    }
 
     app.io.uploadJson = async (uploadPath, data, retries=0) => {
 
@@ -238,7 +261,7 @@ function onDeviceReady() {
         bindClick("addFeatureButton", app.ui.addFeature);
         bindClick("addFeatureButton", app.ui.addFeature);
 
-        uploadData
+
     });
 
     function scan() {
@@ -287,6 +310,45 @@ function onDeviceReady() {
             uploadModalActive = false;
         }
     });
+
+    bindClick('uploaded-list-btn', async () => {
+
+        if (uploadedListModalActive) {
+            uploadedListModal.classList.remove('uploaded_list_modal--visible');
+            uploadedListModalBackground.classList.remove('uploaded_list_modal__background--visible');
+            uploadedListModalBody.classList.remove('uploaded_list_modal__body--visible');
+            uploadedListModalActive = false;
+        } else {
+            uploadedListModal.classList.add('uploaded_list_modal--visible');
+            uploadedListModalBackground.classList.add('uploaded_list_modal__background--visible');
+            uploadedListModalBody.classList.add('uploaded_list_modal__body--visible');
+            uploadedListModalActive = true;
+
+            var uploadsData = await db.getUploads();
+
+            while (uploadedList.firstChild) {
+                uploadedList.removeChild(uploadedList.firstChild)
+            }
+
+            if(uploadsData && uploadsData.length > 0) {
+              for (var i=uploadsData.length - 1; i >= 0; i--) {
+                var uploadData = JSON.parse(uploadsData.item(i).data);
+
+                const li = document.createElement('li');
+                li.classList.add("uploaded-item")
+                uploadedList.appendChild(li);
+                li.innerHTML = `<a href="https://curblr.org/digitizer/?survey=https://curblr-data.s3.amazonaws.com/${uploadData.key}/">${uploadData.timeStamp}:<br/> ${uploadData.surveyCount} surveys, ${uploadData.photoCount} photos</a>`
+              }
+            }
+            else {
+              const li = document.createElement('li');
+              li.classList.add("uploaded-item")
+              uploadedList.appendChild(li);
+              li.innerText = 'No uploads...'
+            }
+        }
+
+    })
 
     bindClick('ble-indicator-btn', () => {
         if (modalActive) {

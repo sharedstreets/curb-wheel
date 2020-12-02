@@ -27,6 +27,11 @@
 					</span>
 					<span id="pendingUploadCount" style="font-weight: bold;"></span>
 				</button>
+				<button class="btn" id="uploaded-list-btn" style="width: 50px;">
+					<span class="icon uploaded-list-icon">
+						<img src='img/inbox.svg' class='icon uploaded-list-indicator' id="uploaded-list-indicator"/>
+					</span>
+				</button>
 			</div>
 		</section>
 		<div id='modes'>
@@ -84,6 +89,7 @@
 			</div>
 			<div id='addFeature' class='scroll mode'></div>
 		</div>
+
 		<div class="js-modal modal">
 			<div class="js-modal__body modal__body">
 				<div class="modal-close" id="modal-close"><img src="img/x.svg" alt=""></div>
@@ -101,6 +107,15 @@
 				<span style="color:grey">Please wait...</span>
 			</div>
 			<div class="js-modal__background upload_modal__background"></div>
+		</div>
+
+		<div class="js-modal uploaded_list_modal">
+			<div class="js-modal__body uploaded_list_modal__body">
+				<div class="uploaded_list_modal-close" id="uploaded_list_modal-close"><img src="img/x.svg" alt=""></div>
+				<h2 class="uploaded_list_modal-title">Uploaded data:</h2>
+				<ul class="uploaded-list"></ul>
+			</div>
+			<div class="js-modal__background uploaded_list_modal__background"></div>
 		</div>
 
     </body>

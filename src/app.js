@@ -506,21 +506,38 @@ var app = {
         features: [],
       };
 
+      let scaleFactor = 1.0;
+      let centerOffset = 0;
+
+      if(survey.ref_len < survey.surveyed_distance) {
+        scaleFactor = survey.ref_len / survey.surveyed_distance;
+      }
+
+      if(survey.ref_len > survey.surveyed_distance) {
+        centerOffset = (survey.ref_len - survey.surveyed_distance) / 2;
+      }
+
       for (let ft of app.state.features) {
+
         let feature = {
           feat_id: ft.feat_id,
           label: ft.name,
           geometry: {
             type: ft.type,
-            distances: [ft.start, ft.end],
+            distances: [(ft.start + centerOffset) / scaleFactor, (ft.end + centerOffset) / scaleFactor],
           },
           images: ft.images,
         };
 
         if (app.state.rollDirection === 'back') {
-          feature.geometry.distances =
-        	feature.geometry.distances.reverse()
-				      .map(meters => app.state.currentRollDistance - meters)
+
+          if(feature.geometry.distances[0])
+            feature.geometry.distances[0] = surveyed_distance - feature.geometry.distances[0]
+
+          if(feature.geometry.distances[1])
+            feature.geometry.distances[1] = surveyed_distance - feature.geometry.distances[1]
+
+          feature.geometry.distances.reverse();
 
         	feature.images = feature.images
         		.map(image => {
@@ -540,6 +557,8 @@ var app = {
           if( feature.geometry.distances[0] + (HYDRANT_BUFFER / 2) < survey.ref_len)
             hydrantEnd = feature.geometry.distances[0] + (HYDRANT_BUFFER / 2);
 
+          feature.geometry.distances[0] = hydrantStart;
+          feature.geometry.distances[1] = hydrantEnd;
           feature.geometry.geom = app.io.getGeom(app.state.street.ref, hydrantStart, hydrantEnd);
 
         }
@@ -568,7 +587,12 @@ var app = {
         const d = new Date();
         const now = d.toISOString();
 
-        const uploadPrefix = now + "/";
+        const uploadKey = uuid4();
+
+        const uploadPrefix = uploadKey + "/";
+
+        var photoCount = 0;
+        var surveyCount = 0;
 
         console.log("Starting upload...")
 
@@ -580,6 +604,7 @@ var app = {
         var pointData = {type:"FeatureCollection", features:[]};
 
         for (var i=0; i<surveyRows.length; i++){
+          surveyCount++;
           var survey = JSON.parse(surveyRows.item(i).data);
           for (let feature of survey.features) {
 
@@ -587,6 +612,7 @@ var app = {
 
               var imageUrls = [];
               for (let image of feature.images) {
+                photoCount++;
 
                 let splitPath = image.url.split("/");
                 let imagePath = "images/" + splitPath[splitPath.length-1];
@@ -694,6 +720,8 @@ var app = {
           }
 
           await app.io.wipeSurveyData();
+
+          await app.io.saveUploadKey(uploadKey, JSON.stringify({timeStamp: now, key: uploadKey, photoCount: photoCount, surveyCount: surveyCount}));
 
           alert("Upload finished.");
 
