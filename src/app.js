@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import {point, lineString} from '@turf/helpers';
+import constants from './constants';
 
 
 const HYDRANT_BUFFER = 9.2; // hydrant buffer in meters
@@ -374,10 +375,8 @@ var app = {
       var modes = Object.keys(app.constants.modes);
       var modeIndex = modes.indexOf(app.state.mode) - 1;
       var newMode = modes[modeIndex];
-
-      // set mode as one previous in list, unless there's a custom back() function
-      var customFn = app.constants.modes[app.state.mode].back;
-      var executeCustomFn = customFn ? customFn() : app.ui.mode.set(newMode);
+      console.log(newMode)
+      app.ui.mode.set(newMode);
     },
 
     // produces a confirm dialog once for each instance, with callbacks for cancel and ok.
@@ -524,7 +523,7 @@ var app = {
           label: ft.name,
           geometry: {
             type: ft.type,
-            distances: [(ft.start + centerOffset) / scaleFactor, (ft.end + centerOffset) / scaleFactor],
+            distances: [(ft.start + centerOffset) / scaleFactor, (ft.end - centerOffset) / scaleFactor],
           },
           images: ft.images,
         };
@@ -532,10 +531,10 @@ var app = {
         if (app.state.rollDirection === 'back') {
 
           if(feature.geometry.distances[0])
-            feature.geometry.distances[0] = surveyed_distance - feature.geometry.distances[0]
+            feature.geometry.distances[0] = survey.ref_len - feature.geometry.distances[0]
 
           if(feature.geometry.distances[1])
-            feature.geometry.distances[1] = surveyed_distance - feature.geometry.distances[1]
+            feature.geometry.distances[1] = survey.ref_len - feature.geometry.distances[1]
 
           feature.geometry.distances.reverse();
 
@@ -549,8 +548,9 @@ var app = {
         // todo error handling for out of bounds offsets
 
         if(feature.label == "Fire hydrant") {
+
           var hydrantStart = 0;
-          if( feature.geometry.distances[0] > HYDRANT_BUFFER / 2)
+          if( feature.geometry.distances[0] > (HYDRANT_BUFFER / 2))
             hydrantStart = feature.geometry.distances[0] - (HYDRANT_BUFFER / 2);
 
           var hydrantEnd = survey.ref_len
@@ -840,7 +840,7 @@ constants: {
         set: () => {
           //conditional on whether the map has instantiated
           if (app.ui.map) {
-            app.ui.map.getSource("arrows").setData(app.constants.emptyGeojson);
+            app.ui.map.getSource("arrows").setData(constants.emptyGeojson);
           }
         },
       },
