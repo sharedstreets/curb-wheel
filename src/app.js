@@ -532,10 +532,10 @@ var app = {
         if (app.state.rollDirection === 'back') {
 
           if(feature.geometry.distances[0])
-            feature.geometry.distances[0] = surveyed_distance - feature.geometry.distances[0]
+            feature.geometry.distances[0] = survey.ref_len - feature.geometry.distances[0]
 
           if(feature.geometry.distances[1])
-            feature.geometry.distances[1] = surveyed_distance - feature.geometry.distances[1]
+            feature.geometry.distances[1] = survey.ref_len - feature.geometry.distances[1]
 
           feature.geometry.distances.reverse();
 
@@ -549,8 +549,9 @@ var app = {
         // todo error handling for out of bounds offsets
 
         if(feature.label == "Fire hydrant") {
+
           var hydrantStart = 0;
-          if( feature.geometry.distances[0] > HYDRANT_BUFFER / 2)
+          if( feature.geometry.distances[0] > (HYDRANT_BUFFER / 2))
             hydrantStart = feature.geometry.distances[0] - (HYDRANT_BUFFER / 2);
 
           var hydrantEnd = survey.ref_len
