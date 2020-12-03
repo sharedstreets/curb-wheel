@@ -524,7 +524,7 @@ var app = {
           label: ft.name,
           geometry: {
             type: ft.type,
-            distances: [(ft.start + centerOffset) / scaleFactor, (ft.end + centerOffset) / scaleFactor],
+            distances: [(ft.start + centerOffset) / scaleFactor, (ft.end - centerOffset) / scaleFactor],
           },
           images: ft.images,
         };
