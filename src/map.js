@@ -1,32 +1,6 @@
 import mapboxgl from 'mapbox-gl';
 import bbox from '@turf/bbox';
-
-
-const constants = {
-	emptyGeojson: {
-		type: "FeatureCollection",
-		features: [],
-	},
-	mapStyle: {
-		arrows: {
-			direction: {
-				forward: "> ",
-				back: " <",
-			},
-
-			side: {
-				right: [
-					[16, [0, 1]],
-					[22, [0, 10]],
-				],
-				left: [
-					[16, [0, -1]],
-					[22, [0, -10]],
-				],
-			},
-		}
-	}
-}
+import constants from './constants';
 
 class CurbWheelMap {
 	constructor(state, emitter) {
@@ -139,27 +113,23 @@ class CurbWheelMap {
 					},
 				})
 				.on("click", "streets", (e) => {
-					if (this.state.mode === "selectStreet") {
-						var edge = e.features[0].geometry.coordinates;
-						this.state.street = e.features[0].properties;
+					this.state.street = e.features[0].properties;
 
-						map.fitBounds(bbox(e.features[0]), {
-							padding: {
-								top: 30,
-								left: 30,
-								right: 30,
-								bottom: 30 + document.querySelector("#mapModal").offsetHeight,
-							},
-						});
+					map.fitBounds(bbox(e.features[0]), {
+						padding: {
+							top: 30,
+							left: 30,
+							right: 30,
+							bottom: 30 + document.querySelector("#mapModal").offsetHeight,
+						},
+					});
 
-						map.getSource("arrows").setData({
-							type: "FeatureCollection",
-							features: [e.features[0]],
-						});
+					map.getSource("arrows").setData({
+						type: "FeatureCollection",
+						features: [e.features[0]],
+					});
 
-						this.emitter.emit("selectDirection")
-
-					}
+					this.emitter.emit("selectDirection")
 				})
 				.on("moveend", (e) => {
 					let zoom = map.getZoom();
